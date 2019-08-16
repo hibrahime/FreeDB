@@ -16,15 +16,21 @@ enum freeDBCommands
 class Command
 {
 private:
-  freeDBCommands commandType;
-  string commandString;
+  freeDBCommands _commandType;
+  string _commandString;
 
 public:
+  Command(freeDBCommands commandType, string commandString)
+  {
+    _commandType = commandType;
+    _commandString = commandString;
+  }
 };
 
 class Input
 {
 private:
+  vector<Command> commands;
   //Helper method.
   void showHelp(string name)
   {
@@ -55,11 +61,13 @@ public:
         }
         else if ((arg == "-d") || (arg == "--database"))
         {
-          cout << argv[++i] << endl;
+          string database = argv[++i];
+          commands.push_back(Command(freeDBCommands::d, database));
         }
         else if ((arg == "-q") || (arg == "--query"))
         {
-          cout << argv[++i] << endl;
+          string database = argv[++i];
+          commands.push_back(Command(freeDBCommands::q, database));
         }
         else
         {
@@ -69,12 +77,15 @@ public:
     }
   }
 
-  void getCommands()
+  vector<Command> getCommands()
   {
+    return commands;
   }
 };
 
 int main(int argc, char *argv[])
 {
   Input inputString(argc, argv);
+
+  vector<Command> cmnd = inputString.getCommands();
 }
