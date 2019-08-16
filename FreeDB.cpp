@@ -17,63 +17,64 @@ class Command
 {
 private:
   freeDBCommands commandType;
+  string commandString;
 
 public:
-  // Default constructor
-  Command()
-  {
-  }
+};
 
+class Input
+{
+private:
+  //Helper method.
   void showHelp(string name)
   {
-    cerr << "Using of: " << name << " <command(s)>"
-         << "Commands:\n"
+    cerr << "Using of: " << name << " <command(s)> Commands:\n"
          << "\t-q,--query\t\tYour query.\n"
-         << "\t-d,--database\t\tYour selected database name."
-         << "\t-h,--help\t\tHelp..."
+         << "\t-d,--database\t\tYour selected database name.\n"
+         << "\t-h,--help\t\tHelp...\n"
          << endl;
   }
 
-  // Command parser constructor
-  Command(int argc, char *argv[])
+public:
+  //Command parser constructor.
+  Input(int argc, char *argv[])
   {
-
-    if (argc < 1)
+    if (argc < 2)
     {
       showHelp(argv[0]);
     }
-
-    vector<string> commands;
-
-    for (int i = 1; i < argc; ++i)
+    else
     {
-      string arg = argv[i];
-      if ((arg == "-h") || (arg == "--help"))
+      for (int i = 1; i < argc; ++i)
       {
-        showHelp(argv[0]);
-      }
-      else if ((arg == "-d") || (arg == "--database"))
-      {
-      }
-      else if ((arg == "-q") || (arg == "--query"))
-      {
-      }
-      else
-      {
+        string arg = argv[i];
+
+        if ((arg == "-h") || (arg == "--help"))
+        {
+          showHelp(argv[0]);
+        }
+        else if ((arg == "-d") || (arg == "--database"))
+        {
+          cout << argv[++i] << endl;
+        }
+        else if ((arg == "-q") || (arg == "--query"))
+        {
+          cout << argv[++i] << endl;
+        }
+        else
+        {
+          cout << "There is no command like " << arg << endl;
+        }
       }
     }
+  }
 
-    for (int i = 0; i < argc; i++)
-    {
-      cout << "argv " << i << " " << argv[i] << endl;
-    }
+  void getCommands()
+  {
   }
 };
 
 int main(int argc, char *argv[])
 {
-  //cout << argc << endl;
-  //cout << *argv << endl;
-
-  Command inputCommand(argc, argv);
+  Input inputString(argc, argv);
 }
