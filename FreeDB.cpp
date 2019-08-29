@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 enum freeDBCommands
@@ -18,12 +19,28 @@ class Command
 private:
   freeDBCommands _commandType;
   string _commandString;
+  bool _isExecuted = false;
 
 public:
   Command(freeDBCommands commandType, string commandString)
   {
     _commandType = commandType;
     _commandString = commandString;
+  }
+
+  freeDBCommands GetCommand()
+  {
+    return _commandType;
+  }
+
+  void setIsExecuted()
+  {
+    _isExecuted = true;
+  }
+
+  bool getIsExecuted()
+  {
+    return _isExecuted;
   }
 };
 
@@ -41,6 +58,32 @@ private:
          << endl;
   }
 
+  bool controlIsExist(freeDBCommands command)
+  {
+    for (int i = 0; i < commands.size(); i++)
+    {
+      if (commands.at(i).GetCommand() == command)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addCommandToCommands(freeDBCommands command, string commandString, char *argv[], int i)
+  {
+    if (controlIsExist(command))
+    {
+      cerr << argv[i] << " command used twice!\n"
+           << endl;
+      showHelp(argv[0]);
+    }
+    else
+    {
+      commands.push_back(Command(command, commandString));
+    }
+  }
+
 public:
   //Command parser constructor.
   Input(int argc, char *argv[])
@@ -54,6 +97,8 @@ public:
       for (int i = 1; i < argc; ++i)
       {
         string arg = argv[i];
+        string commandString = argv[++i];
+        freeDBCommands command;
 
         if ((arg == "-h") || (arg == "--help"))
         {
@@ -61,13 +106,13 @@ public:
         }
         else if ((arg == "-d") || (arg == "--database"))
         {
-          string database = argv[++i];
-          commands.push_back(Command(freeDBCommands::d, database));
+          command = freeDBCommands::d;
+          addCommandToCommands(command, commandString, argv, i);
         }
         else if ((arg == "-q") || (arg == "--query"))
         {
-          string database = argv[++i];
-          commands.push_back(Command(freeDBCommands::q, database));
+          command = freeDBCommands::q;
+          addCommandToCommands(command, commandString, argv, i);
         }
         else
         {
@@ -80,6 +125,29 @@ public:
   vector<Command> getCommands()
   {
     return commands;
+  }
+};
+
+class Execute
+{
+private:
+  bool sortBycommandName(Command c1, Command c2)
+  {
+    return c1.GetCommand() > c2.GetCommand();
+  }
+
+  void sortCommands(vector<Command> commands)
+  {
+    sort(commands.begin(), commands.end(), sortBycommandName);
+  }
+
+public:
+  Execute(vector<Command> commands)
+  {
+    sortCommands(commands);
+    for (int i = 0; i < commands.size(); i++)
+    {
+    }
   }
 };
 
